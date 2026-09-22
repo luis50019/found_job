@@ -20,6 +20,8 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql://jobradar:${POSTGRES_PASSWORD:-change_me}@postgres:5432/jobradar
+      ENABLE_JOOBLE: ${ENABLE_JOOBLE:-true}
+      JOOBLE_API_KEY: ${JOOBLE_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy

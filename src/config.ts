@@ -17,6 +17,8 @@ const schema = z.object({
   ENABLE_REMOTIVE: booleanString,
   ENABLE_REMOTEOK: booleanString,
   ENABLE_ARBEITNOW: booleanString,
+  ENABLE_JOOBLE: booleanString,
+  JOOBLE_API_KEY: z.string().default(""),
   ADZUNA_APP_ID: z.string().default(""),
   ADZUNA_APP_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("info")
@@ -46,6 +48,8 @@ export const config = {
   enableRemotive: env.ENABLE_REMOTIVE,
   enableRemoteOk: env.ENABLE_REMOTEOK,
   enableArbeitnow: env.ENABLE_ARBEITNOW,
+  enableJooble: env.ENABLE_JOOBLE,
+  joobleApiKey: env.JOOBLE_API_KEY,
   adzunaAppId: env.ADZUNA_APP_ID,
   adzunaAppKey: env.ADZUNA_APP_KEY,
   logLevel: env.LOG_LEVEL

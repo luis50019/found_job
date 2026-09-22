@@ -5,6 +5,7 @@ Bot privado de Telegram para buscar vacantes compatibles con el perfil de Luis, 
 ## Que hace
 
 - Consulta Remotive, Remote OK y Arbeitnow sin credenciales.
+- Puede consultar vacantes de Mexico con Jooble si agregas su API key.
 - Puede consultar vacantes locales de Mexico con Adzuna si agregas sus claves.
 - Busca puestos DevOps, Cloud, SRE, Backend Node/TypeScript y Frontend React.
 - Prioriza Junior, Intern, Trainee y Entry Level.
@@ -40,6 +41,13 @@ POSTGRES_PASSWORD=una_contrasena_larga
 ```
 
 Para incluir más vacantes locales de Mexico, crea claves en [Adzuna Developer](https://developer.adzuna.com/) y llena `ADZUNA_APP_ID` y `ADZUNA_APP_KEY`. El bot funciona sin ellas usando las fuentes remotas.
+
+Para consultar Jooble, solicita una clave en [Jooble REST API](https://jooble.org/api/about) y configura:
+
+```env
+ENABLE_JOOBLE=true
+JOOBLE_API_KEY=tu_clave_de_jooble
+```
 
 ### 3. Levantar con Docker
 

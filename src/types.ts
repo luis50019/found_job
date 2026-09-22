@@ -1,4 +1,4 @@
-export type SourceName = "remotive" | "remoteok" | "arbeitnow" | "adzuna";
+export type SourceName = "remotive" | "remoteok" | "arbeitnow" | "adzuna" | "jooble";
 
 export interface Job {
   externalId: string;

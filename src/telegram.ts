@@ -55,7 +55,7 @@ export function configureBot(): void {
     if (!(await requireAllowed(ctx))) return;
     await ctx.reply(
       `🟢 Bot activo\nPuntaje minimo: ${config.matchThreshold}%\nRevision programada: ${config.checkCron}\n` +
-        `Fuentes: Remotive${config.enableRemoteOk ? ", Remote OK" : ""}${config.enableArbeitnow ? ", Arbeitnow" : ""}${config.adzunaAppId ? ", Adzuna Mexico" : ""}`
+        `Fuentes: Remotive${config.enableRemoteOk ? ", Remote OK" : ""}${config.enableArbeitnow ? ", Arbeitnow" : ""}${config.enableJooble && config.joobleApiKey ? ", Jooble" : ""}${config.adzunaAppId ? ", Adzuna Mexico" : ""}`
     );
   });
 
