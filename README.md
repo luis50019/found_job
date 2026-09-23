@@ -7,6 +7,8 @@ Bot privado de Telegram para buscar vacantes compatibles con el perfil de Luis, 
 - Consulta Remotive, Remote OK y Arbeitnow sin credenciales.
 - Puede consultar vacantes de Mexico con Jooble si agregas su API key.
 - Puede consultar vacantes locales de Mexico con Adzuna si agregas sus claves.
+- Permite elegir desde Telegram entre DevOps, Backend y Desarrollo Web.
+- `/buscar` siempre muestra los mejores resultados encontrados en las areas activas, aunque no alcancen el porcentaje minimo.
 - Busca puestos DevOps, Cloud, SRE, Backend Node/TypeScript y Frontend React.
 - Prioriza Junior, Intern, Trainee y Entry Level.
 - Descarta puestos Senior/Lead y ubicaciones incompatibles.
@@ -58,11 +60,14 @@ docker compose logs -f bot
 
 Después abre tu bot en Telegram y ejecuta `/start`.
 
+Usa `/areas` para activar o desactivar las areas que te interesan y después ejecuta `/buscar`. La selección se guarda en PostgreSQL y también se aplica a las revisiones programadas.
+
 ## Comandos
 
 | Comando | Funcion |
 | --- | --- |
 | `/start` | Registra el chat y activa los avisos |
+| `/areas` | Selecciona DevOps, Backend o Desarrollo Web |
 | `/buscar` | Ejecuta una busqueda inmediatamente |
 | `/estado` | Muestra umbral, horario y fuentes |
 | `/perfil` | Muestra el perfil usado para comparar |
@@ -75,6 +80,7 @@ Después abre tu bot en Telegram y ejecuta `/start`.
 - Cambia `MATCH_THRESHOLD` para exigir más o menos compatibilidad.
 - Cambia `CHECK_CRON` para ajustar la frecuencia. `0 */6 * * *` significa cada seis horas.
 - `MAX_NOTIFICATIONS_PER_RUN` evita recibir demasiados mensajes en una sola revisión.
+- La búsqueda manual muestra hasta `MAX_NOTIFICATIONS_PER_RUN` resultados, ordenados por compatibilidad.
 
 Después de modificar código:
 

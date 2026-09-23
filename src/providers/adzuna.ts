@@ -23,13 +23,13 @@ export class AdzunaProvider implements JobProvider {
     private readonly appKey: string
   ) {}
 
-  async fetchJobs(): Promise<Job[]> {
+  async fetchJobs(searchQueries: readonly string[] = candidateProfile.searchQueries): Promise<Job[]> {
     const batches = await Promise.all(
-      candidateProfile.searchQueries.map(async (query) => {
+      searchQueries.map(async (query) => {
         const params = new URLSearchParams({
           app_id: this.appId,
           app_key: this.appKey,
-          results_per_page: "30",
+          results_per_page: "50",
           what: query,
           sort_by: "date",
           content_type: "application/json"

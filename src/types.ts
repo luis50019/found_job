@@ -1,4 +1,5 @@
 export type SourceName = "remotive" | "remoteok" | "arbeitnow" | "adzuna" | "jooble";
+export type SearchArea = "devops" | "backend" | "web";
 
 export interface Job {
   externalId: string;
@@ -23,13 +24,20 @@ export interface ScoreResult {
 
 export interface JobProvider {
   name: SourceName;
-  fetchJobs(): Promise<Job[]>;
+  fetchJobs(searchQueries?: readonly string[]): Promise<Job[]>;
 }
 
 export interface ScanSummary {
   fetched: number;
+  areaMatches: number;
   eligible: number;
   newMatches: number;
   notified: number;
+  shown: number;
   providerErrors: string[];
+}
+
+export interface SubscriberPreferences {
+  chatId: number;
+  selectedAreas: SearchArea[];
 }

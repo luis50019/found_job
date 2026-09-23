@@ -1,6 +1,6 @@
-import { candidateProfile } from "./profile.js";
+import { allSearchAreas, candidateProfile, getJobAreas } from "./profile.js";
 import { normalizeText } from "./text.js";
-import type { Job, ScoreResult } from "./types.js";
+import type { Job, ScoreResult, SearchArea } from "./types.js";
 
 function includesAny(text: string, terms: readonly string[]): boolean {
   return terms.some((term) => text.includes(normalizeText(term)));
@@ -17,11 +17,12 @@ function locationIsEligible(job: Job): boolean {
   return includesAny(location, candidateProfile.allowedLocations);
 }
 
-export function scoreJob(job: Job): ScoreResult {
+export function scoreJob(job: Job, selectedAreas: readonly SearchArea[] = allSearchAreas): ScoreResult {
   const title = normalizeText(job.title);
   const content = normalizeText(`${job.title} ${job.description} ${job.tags.join(" ")}`);
 
-  const roleMatch = includesAny(title, candidateProfile.targetRoles);
+  const jobAreas = getJobAreas(job);
+  const roleMatch = selectedAreas.some((area) => jobAreas.includes(area));
   const preferredLevel = includesAny(content, candidateProfile.preferredLevels);
   const excludedLevel = includesAny(title, candidateProfile.excludedLevels);
   const eligibleLocation = locationIsEligible(job);

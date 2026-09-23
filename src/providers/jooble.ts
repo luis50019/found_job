@@ -46,9 +46,9 @@ export class JoobleProvider implements JobProvider {
     return (await response.json()) as JoobleResponse;
   }
 
-  async fetchJobs(): Promise<Job[]> {
+  async fetchJobs(searchQueries: readonly string[] = candidateProfile.searchQueries): Promise<Job[]> {
     const responses = await Promise.all(
-      candidateProfile.searchQueries.map((query) => this.search(query))
+      searchQueries.map((query) => this.search(query))
     );
 
     const unique = new Map<string, Job>();

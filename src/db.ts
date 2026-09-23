@@ -1,9 +1,16 @@
 import pg from "pg";
 import { config } from "./config.js";
-import type { Job, ScoreResult } from "./types.js";
+import type { Job, ScoreResult, SearchArea, SubscriberPreferences } from "./types.js";
 
 const { Pool } = pg;
 export const pool = new Pool({ connectionString: config.databaseUrl });
+const defaultAreas: SearchArea[] = ["devops", "backend", "web"];
+const validAreas = new Set<SearchArea>(defaultAreas);
+
+function normalizeAreas(areas: readonly string[] | null | undefined): SearchArea[] {
+  const selected = (areas ?? []).filter((area): area is SearchArea => validAreas.has(area as SearchArea));
+  return selected.length > 0 ? [...new Set(selected)] : [...defaultAreas];
+}
 
 export async function migrate(): Promise<void> {
   await pool.query(`
@@ -13,6 +20,7 @@ export async function migrate(): Promise<void> {
       username TEXT,
       first_name TEXT,
       active BOOLEAN NOT NULL DEFAULT TRUE,
+      selected_areas TEXT[] NOT NULL DEFAULT ARRAY['devops', 'backend', 'web']::TEXT[],
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -30,6 +38,10 @@ export async function migrate(): Promise<void> {
 
     CREATE INDEX IF NOT EXISTS idx_subscribers_active ON subscribers(active);
     CREATE INDEX IF NOT EXISTS idx_notified_jobs_notified_at ON notified_jobs(notified_at DESC);
+
+    ALTER TABLE subscribers
+      ADD COLUMN IF NOT EXISTS selected_areas TEXT[] NOT NULL
+      DEFAULT ARRAY['devops', 'backend', 'web']::TEXT[];
   `);
 }
 
@@ -59,6 +71,32 @@ export async function unsubscribe(chatId: number): Promise<void> {
 export async function getActiveChatIds(): Promise<number[]> {
   const result = await pool.query<{ chat_id: string }>("SELECT chat_id FROM subscribers WHERE active = TRUE");
   return result.rows.map((row) => Number(row.chat_id));
+}
+
+export async function getSelectedAreas(chatId: number): Promise<SearchArea[]> {
+  const result = await pool.query<{ selected_areas: string[] }>(
+    "SELECT selected_areas FROM subscribers WHERE chat_id = $1",
+    [chatId]
+  );
+  return normalizeAreas(result.rows[0]?.selected_areas);
+}
+
+export async function setSelectedAreas(chatId: number, areas: readonly SearchArea[]): Promise<void> {
+  if (areas.length === 0) throw new Error("Debes mantener al menos un area activa");
+  await pool.query(
+    "UPDATE subscribers SET selected_areas = $2::TEXT[], updated_at = NOW() WHERE chat_id = $1",
+    [chatId, normalizeAreas(areas)]
+  );
+}
+
+export async function getActiveSubscribers(): Promise<SubscriberPreferences[]> {
+  const result = await pool.query<{ chat_id: string; selected_areas: string[] }>(
+    "SELECT chat_id, selected_areas FROM subscribers WHERE active = TRUE"
+  );
+  return result.rows.map((row) => ({
+    chatId: Number(row.chat_id),
+    selectedAreas: normalizeAreas(row.selected_areas)
+  }));
 }
 
 export async function wasNotified(externalId: string): Promise<boolean> {

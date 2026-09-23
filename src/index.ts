@@ -9,11 +9,11 @@ import { bot, configureBot, registerScanHandler, setCommands } from "./telegram.
 const logger = pino({ level: config.logLevel });
 const providers = createProviders();
 
-async function runScan(): Promise<string> {
-  logger.info({ providers: providers.map((provider) => provider.name) }, "Iniciando busqueda");
-  const summary = await scanAndNotify(bot, providers);
+async function runScan(chatId?: number): Promise<string> {
+  logger.info({ providers: providers.map((provider) => provider.name), chatId }, "Iniciando busqueda");
+  const summary = await scanAndNotify(bot, providers, { targetChatId: chatId });
   logger.info(summary, "Busqueda terminada");
-  return formatScanSummary(summary);
+  return formatScanSummary(summary, chatId !== undefined);
 }
 
 async function main(): Promise<void> {
